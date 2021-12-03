@@ -51,11 +51,6 @@ def RangerDangerPart2Innie(nums, targetType):
     lenBits = len(nums[0])
     countZero = 0
     countOne = 0
-    gamma = []
-    eps = []
-    gammaBin = 0
-    epsBin = 0
-    leadingNum = ""
     for x in range(lenBits):
         y = 0
         if len(nums) == 1:
@@ -65,11 +60,6 @@ def RangerDangerPart2Innie(nums, targetType):
                 countZero += 1
             elif y[x] == "1":
                 countOne += 1
-        
-        if countZero > countOne:
-            leadingNum = "0"
-        else:
-            leadingNum = "1"
 
         if targetType == "oxy":
             if countZero > countOne:
