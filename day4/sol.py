@@ -1,5 +1,6 @@
 import os
 from collections import Counter
+from collections import OrderedDict
 
 def readInputFile(fileName):
     __location__ = os.path.realpath(
@@ -16,7 +17,6 @@ class Game:
         self.boards = []
         self.__curStep = 0
         self.__genBoards(lines[2:])
-        self.__winningBoards = []
 
     def __genBoards(self, lines):
         curBoard = []
@@ -38,26 +38,33 @@ class Game:
             return 0
         
 
-    def PlayGame(self):
+    def PlayGame(self, getLast):
         self.__curStep = 0
 
         winningBoardProd = self.__doStep()
+        mostRecentWin = 0
 
-        while winningBoardProd == 0:
+        while len(self.boards) > 1 and self.__curStep < len(self.winningsNumbers):
             self.__curStep += 1
             winningBoardProd = self.__doStep()
+            if (winningBoardProd != 0):
+                mostRecentWin = list(winningBoardProd[1])
+                self.boards.pop(winningBoardProd[0])
+                if not getLast:
+                    return self.__calcPart1Answer(mostRecentWin)
+            
            # assert(self._curStep < len(self.winningsNumbers))
 
 
-        return self.__calcPart1Answer(winningBoardProd)
+        return self.__calcPart1Answer(mostRecentWin)
 
     # Check all boards for a win in a current step.
     # Returns first board with a win.
     def __checkWinAll(self):
-        for board in self.boards:
-            win = self.__checkOneBoardForWin(board)
+        for x in range(len(self.boards)):
+            win = self.__checkOneBoardForWin(self.boards[x])
             if win:
-                return board
+                return (x, self.boards[x])
 
         return False
 
@@ -99,17 +106,32 @@ class Game:
 
 def theGoods():
 
+    # Part 1
     exinput = readInputFile("exinput.txt")
-    exGame = Game(exinput)
-    solEx = exGame.PlayGame()
-
-    assert (solEx == 4512)
+    ##exGame = Game(exinput)
+    #solEx = exGame.PlayGame(False)
+    #print(solEx)
+    #assert (solEx == 4512)
 
     
     input = readInputFile("input.txt")
-    ILostTheGame = Game(input)
-    solPart1 = ILostTheGame.PlayGame()
+    #ILostTheGame = Game(input)
+    #solPart1 = ILostTheGame.PlayGame(False)
 
-    print(solPart1)
+    #print(solPart1)
+
+    # Part 2
+    #exGame2 = Game(exinput)
+    #solEx2 = exGame2.PlayGame(True)
+
+    #print(solEx2)
+
+    ILostTheGame2 = Game(input)
+    solPart2 = ILostTheGame2.PlayGame(True)
+
+    print(solPart2)
+
+
+
 
 theGoods()
