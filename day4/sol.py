@@ -33,7 +33,7 @@ class Game:
         winningBoard = self.__checkWinAll()
 
         if winningBoard != False:
-            self.__winningBoards.append(winningBoard)
+            return winningBoard
         else:
             return 0
         
@@ -43,13 +43,13 @@ class Game:
 
         winningBoardProd = self.__doStep()
 
-        while self.__curStep < len(self.winningsNumbers):
+        while winningBoardProd == 0:
             self.__curStep += 1
             winningBoardProd = self.__doStep()
            # assert(self._curStep < len(self.winningsNumbers))
 
 
-        return self.__calcPart1Answer(self.__winningBoards[-1])
+        return self.__calcPart1Answer(winningBoardProd)
 
     # Check all boards for a win in a current step.
     # Returns first board with a win.
