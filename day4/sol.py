@@ -14,9 +14,7 @@ class Game:
     def __init__(self, lines) -> None:
         self.winningsNumbers = lines[0].split(',')
         self.boards = []
-        self.__curStep = 0
         self.__genBoards(lines[2:])
-        self.__winningBoards = []
 
     def __genBoards(self, lines):
         curBoard = []
@@ -29,37 +27,45 @@ class Game:
 
         self.boards.append(curBoard)
     
-    def __doStep(self):
-        winningBoard = self.__checkWinAll()
+    def __doStep(self, getLast):
+        winningBoard = self.__checkWinAll(getLast)
 
-        if winningBoard != False:
-            self.__winningBoards.append(winningBoard)
+        if not getLast:
+            if winningBoard != False:
+                return True
+            else:
+                return False
         else:
-            return 0
+            return True
         
 
-    def PlayGame(self):
+    def PlayGame(self, getLast):
         self.__curStep = 0
+        self.__winningBoards = []
 
-        winningBoardProd = self.__doStep()
+        winningBoardProd = self.__doStep(getLast)
 
-        while self.__curStep < len(self.winningsNumbers):
+        while (not getLast and not winningBoardProd == False) or \
+        (getLast and self.__curStep < len(self.winningsNumbers)):
             self.__curStep += 1
-            winningBoardProd = self.__doStep()
+            winningBoardProd = self.__doStep(getLast)
            # assert(self._curStep < len(self.winningsNumbers))
 
 
         return self.__calcPart1Answer(self.__winningBoards[-1])
 
     # Check all boards for a win in a current step.
-    # Returns first board with a win.
-    def __checkWinAll(self):
+    # Returns first winning board (or last if specified)
+    def __checkWinAll(self, getLast):
+        lastBoard = False
         for board in self.boards:
-            win = self.__checkOneBoardForWin(board)
-            if win:
-                return board
+                win = self.__checkOneBoardForWin(board)
+                if win and not getLast:
+                    return board
+                elif getLast:
+                    self.__winningBoards.append(board)
 
-        return False
+        return lastBoard
 
     def __checkOneBoardForWin(self, board):
         # Horizonal
@@ -101,7 +107,7 @@ def theGoods():
 
     exinput = readInputFile("exinput.txt")
     exGame = Game(exinput)
-    solEx = exGame.PlayGame()
+    solEx = exGame.PlayGame(False)
 
     assert (solEx == 4512)
 
