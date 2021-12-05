@@ -9,27 +9,11 @@ def readInputFile(fileName):
 
     return inputLines
 class Game:
-    def __init__(self, lines) -> None:
-        self.winningsNumbers = lines[0].split(',')
-        self.boards = []
+    def __init__(self, lines: list) -> None:
+        self.__boards = []
         self.__curStep = 0
         self.__genBoards(lines[2:])
-
-    def __genBoards(self, lines):
-        curBoard = []
-        for line in lines:
-            if(len(line) == 0):
-                self.boards.append(curBoard)
-                curBoard = []
-            else:
-                curBoard.append(line.split())
-
-        self.boards.append(curBoard)
-    
-    def __doStep(self):
-        winningBoards = self.__checkWinAll()
-
-        return winningBoards
+        self.winningsNumbers = lines[0].split(',')
 
     def PlayGame(self, getLast):
         self.__curStep = 0
@@ -37,34 +21,46 @@ class Game:
         winningBoardsProd = self.__doStep()
         mostRecentWin = 0
 
-        while len(self.boards) > 1 and self.__curStep < len(self.winningsNumbers):
+        while len(self.__boards) > 1 and self.__curStep < len(self.winningsNumbers):
             self.__curStep += 1
             winningBoardsProd = self.__doStep()
             if (len(winningBoardsProd) != 0):
                 mostRecentWin = list(winningBoardsProd[-1][1])
                 for x in range(len (winningBoardsProd) - 1, 0, -1):
                     index = winningBoardsProd[x][0]
-                    self.boards.pop(index)
+                    self.__boards.pop(index)
                 if not getLast:
                     return self.__calcAnswer(mostRecentWin)
-            
-           # assert(self._curStep < len(self.winningsNumbers))
-
 
         return self.__calcAnswer(mostRecentWin)
 
-    # Check all boards for a win in a current step.
-    # Returns first board with a win.
-    def __checkWinAll(self):
-        winningBoards = []
-        for x in range(len(self.boards)):
-            win = self.__checkOneBoardForWin(self.boards[x])
-            if win:
-                winningBoards.append((x, self.boards[x]))
+    def __genBoards(self, lines: list):
+        curBoard = []
+        for line in lines:
+            if(len(line) == 0):
+                self.__boards.append(curBoard)
+                curBoard = []
+            else:
+                curBoard.append(line.split())
+
+        self.__boards.append(curBoard)
+    
+    def __doStep(self):
+        winningBoards = self.__checkWinAll()
 
         return winningBoards
 
-    def __checkOneBoardForWin(self, board):
+    # Returns all boards with a win in a current step.
+    def __checkWinAll(self):
+        winningBoards = []
+        for x in range(len(self.__boards)):
+            win = self.__checkWinOne(self.__boards[x])
+            if win:
+                winningBoards.append((x, self.__boards[x]))
+
+        return winningBoards
+
+    def __checkWinOne(self, board) -> bool:
         # Horizonal
         matchCount = 0
         for row in board:
@@ -89,7 +85,7 @@ class Game:
         
         return False
 
-    def __calcAnswer(self, board):
+    def __calcAnswer(self, board: list) -> int:
         sum = 0
         for row in board:
             for num in row:
