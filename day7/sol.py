@@ -21,17 +21,27 @@ def getMinCost(crabsLine):
     locMin = crabs[0]
     locMax = crabs[-1]
 
-    costMin = len(crabs) * locMax
+    costMin = 1000000000000000000000000000000 # Sentinals are for squards
 
     for loc in range (locMin, locMax + 1):
         costCur = 0
         for crab in crabs:
-            costCur += abs(crab - loc)
+            diff = abs(crab - loc)
+            costCur += diff
+            small = min(crab, loc)
+            big   = max(crab, loc)
+            for x in range(small, big):
+                costCur += x - small
+
+                if costCur > costMin:
+                    break
 
             # else:
             #     break
-        if costCur <= costMin:
+        if costCur < costMin:
             costMin = costCur
+        else:
+            break
 
     return costMin
 
