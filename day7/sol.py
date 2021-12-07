@@ -28,16 +28,12 @@ def getMinCost(crabsLine):
         for crab in crabs:
             diff = abs(crab - loc)
             costCur += diff
-            small = min(crab, loc)
-            big   = max(crab, loc)
-            for x in range(small, big):
-                costCur += x - small
-
+            for x in range(diff - 1, 0, -1):
+                costCur += x
                 if costCur > costMin:
                     break
-
-            # else:
-            #     break
+            if costCur > costMin:
+                break
         if costCur < costMin:
             costMin = costCur
         else:
