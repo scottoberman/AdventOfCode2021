@@ -16,7 +16,6 @@ def CalcScore(lines):
     #  * 1 -> 7 -> 4 -> (2, 3, 5)  -> (0, 6, 9) -> 8
     # EZ Digits: 1, 7, 4, 8
             
-
     ins = []
     outs = []
     outsTotal = []
@@ -27,8 +26,6 @@ def CalcScore(lines):
     len8 = 7
 
     chars1 = {}
-    numStuff = {}
-
 
     # Parse Input
     for line in lines:
