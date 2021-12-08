@@ -1,5 +1,3 @@
-# Probably easier with linear algebra shenanigans
-
 import os
 from collections import Counter
 
@@ -59,7 +57,8 @@ def CalcScore(lines):
             elif len(entry) == len8:
                 outsResolved.append('8')
             elif len(chars1[8].intersection(set(entry))) == 6:
-                if len(chars1[1].intersection(set(entry))) == 2:
+                if len(chars1[1].intersection(set(entry))) == 2 and \
+                len(chars1[4].intersection(set(entry))) != 3:
                     outsResolved.append('9')
                 elif len(chars1[1].intersection(set(entry))) == 1:
                     outsResolved.append('6')
