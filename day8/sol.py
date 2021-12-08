@@ -12,30 +12,15 @@ def readInputFile(fileName):
 
     return inputLines
 
-def Count1478(lines):
+
+def CalcScore(lines):
     # General formation rules:
     #  * 1 -> 7 -> 4 -> (2, 3, 5)  -> (0, 6, 9) -> 8
     # EZ Digits: 1, 7, 4, 8
-    def charMatchCount(chars1: set, chars2: set):
-
-        if len(chars1) >= len(chars2):
-            source = chars1
-            target = chars2
-        else:
-            source = chars2
-            target = chars2
-
-        matchCount = 0
-        for char in source:
-            if char in target:
-                matchCount += 1
-                
-        return matchCount
             
 
     ins = []
     outs = []
-    outsResolved = []
     outsTotal = []
 
     len1 = 2
@@ -43,69 +28,62 @@ def Count1478(lines):
     len4 = 4
     len8 = 7
 
-    len235 = 5
-    len069 = 6
-
     chars1 = {}
     numStuff = {}
 
 
     # Parse Input
     for line in lines:
+        outsResolved = []
         ins = line.split(' | ')[0].split()
         outs = line.split(' | ')[1].split()
 
-    for entry in ins:
-            match len(entry):
-                case 2:
-                    chars1[1] = (set([char for char in entry]))
-                case 3:
-                    chars1[7] = (set([char for char in entry]))
-                case 4:
-                    chars1[4] = (set([char for char in entry]))
-                case 7:
-                    chars1[8] = (set([char for char in entry]))
+        for entry in ins:
+                match len(entry):
+                    case 2:
+                        chars1[1] = (set([char for char in entry]))
+                    case 3:
+                        chars1[7] = (set([char for char in entry]))
+                    case 4:
+                        chars1[4] = (set([char for char in entry]))
+                    case 7:
+                        chars1[8] = (set([char for char in entry]))
 
-    for entry in outs:
-        if charMatchCount(chars1[8], set(entry)) == 6:
-            # 9
-            if charMatchCount(chars1[1], set(entry)) == 2:
-                outsResolved.append('9')
-            # 6
-            elif charMatchCount(chars1[1], set(entry)) == 1:
-                outsResolved.append('6')
-            # 0
-            elif charMatchCount(chars1[4], set(entry)) == 3:
-                outsResolved.append('0')
-        # 3
-        elif charMatchCount(chars1[7], set(entry)) == 3:
-            outsResolved.append('3')
-        # 2
-        elif charMatchCount(chars1[4], set(entry)) == 2:
-            outsResolved.append('2')
-        # 5
-        elif charMatchCount(chars1[4], set(entry)) == 3:
-            outsResolved.append('5')
-        elif len(entry) == len1:
-            outsResolved.append('1')
-        elif len(entry) == len7:
-            outsResolved.append('7')
-        elif len(entry) == len4:
-            outsResolved.append('4')
-        elif len(entry) == len8:
-            outsResolved.append('8')
-        else:
-            assert(False)
+        for entry in outs:
+            if len(entry) == len1:
+                outsResolved.append('1')
+            elif len(entry) == len7:
+                outsResolved.append('7')
+            elif len(entry) == len4:
+                outsResolved.append('4')
+            elif len(entry) == len8:
+                outsResolved.append('8')
+            elif len(chars1[8].intersection(set(entry))) == 6:
+                if len(chars1[1].intersection(set(entry))) == 2:
+                    outsResolved.append('9')
+                elif len(chars1[1].intersection(set(entry))) == 1:
+                    outsResolved.append('6')
+                elif len(chars1[4].intersection(set(entry))) == 3:
+                    outsResolved.append('0')
+                else:
+                    assert(False)
+            elif len(chars1[7].intersection(set(entry))) == 3:
+                outsResolved.append('3')
+            elif len(chars1[4].intersection(set(entry))) == 2:
+                outsResolved.append('2')
+            elif len(chars1[4].intersection(set(entry))) == 3:
+                outsResolved.append('5')
+            else:
+                assert(False)
         
-    outsResolved = outsResolved.join()
-    outsTotal.append(outsResolved)
+        outsTotal.append(int(''.join(outsResolved)))
 
-    return outsResolved
+    return sum(outsTotal)
     
                 
                     
 def daGoods():
-    print(Count1478(readInputFile('exinput.txt')))
-    print(Count1478(readInputFile('input.txt')))
+    print(CalcScore(readInputFile('exinput.txt')))
+    print(CalcScore(readInputFile('input.txt')))
 
 daGoods()
