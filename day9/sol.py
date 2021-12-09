@@ -14,22 +14,22 @@ def DFSBasin(basinInd, pointsToCheck: set, grid, basinNum, basinData: dict):
         lineIndex, eleIndex = basinInd.pop()
         basinData[(lineIndex, eleIndex)] = basinNum
         # Moving left
-        if (lineIndex, eleIndex - 1) in pointsToCheck and (eleIndex > 0  and grid[lineIndex][eleIndex - 1] != 9):
+        if (lineIndex, eleIndex - 1) in pointsToCheck:
             pointsToCheck.remove((lineIndex, eleIndex - 1))
             basinInd.append((lineIndex, eleIndex - 1))
             DFSBasin(basinInd, pointsToCheck, grid, basinNum, basinData)
         # Moving right
-        if (lineIndex, eleIndex + 1) in pointsToCheck and (eleIndex < len(grid[0]) - 1  and grid[lineIndex][eleIndex + 1] != 9):
+        if (lineIndex, eleIndex + 1) in pointsToCheck:
             pointsToCheck.remove((lineIndex, eleIndex + 1))
             basinInd.append((lineIndex, eleIndex + 1))
             DFSBasin(basinInd, pointsToCheck, grid, basinNum, basinData)
         # Moving down
-        if lineIndex > 0 and grid[lineIndex - 1][eleIndex] != 9:
+        if (lineIndex - 1, eleIndex) in pointsToCheck:
             pointsToCheck.remove((lineIndex - 1, eleIndex))
             basinInd.append((lineIndex - 1, eleIndex))
             DFSBasin(basinInd, pointsToCheck, grid, basinNum, basinData)
         # Moving up
-        if lineIndex < len(grid) - 1 and grid[lineIndex + 1][eleIndex] != 9:
+        if (lineIndex + 1, eleIndex) in pointsToCheck:
             pointsToCheck.remove((lineIndex + 1, eleIndex))
             basinInd.append((lineIndex + 1, eleIndex))
             DFSBasin(basinInd, pointsToCheck, grid, basinNum, basinData)
@@ -62,7 +62,20 @@ def GetLowPointsRiskScore(lines):
     # Have to jump between basins.
     while len(pointsToCheck) > 0:
         DFSBasin(basinInd, pointsToCheck, grid, basinNum, basinData)
+        if len(pointsToCheck) > 0:
+            assert(len(basinInd) == 0)
+            basinInd.append(next(iter(pointsToCheck)))
         basinNum += 1
+
+    basinProd = 1
+    basinCount = Counter()
+    for basin in basinData:
+        basinCount[basinData[basin]] += 1
+
+    for count in basinCount.most_common(3):
+        basinProd *= count[1]
+    
+    return basinProd
 
 def daGoods():
     print(GetLowPointsRiskScore(readInputFile("exinput.txt")))
