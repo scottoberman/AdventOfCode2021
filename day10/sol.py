@@ -1,4 +1,5 @@
 import os
+import math
 from collections import Counter
 
 def readInputFile(fileName):
@@ -11,16 +12,18 @@ def readInputFile(fileName):
     return inputLines
 
 # Assuming all chunks at least start (so never looking for a '(', '[', etc as an error only cosing symbols).
-def TotalErrorScore(lines):
+def TotalIncompScore(lines):
     symbStack = []
 
     symbPairs = {'(': ')', '[': ']', '{': '}', '<': '>'}
-    
-    charErrorScore = {')': 3, ']': 57, '}': 1197, '>': 25137}
 
-    totalErrorScore = 0
+    charIncompScore = {')': 1, ']': 2, '}': 3, '>': 4}
 
-    for line in lines:
+    linesScores = [0 for x in lines]
+
+    for index, line in enumerate(lines):
+        symbStack = []
+        lineError = False
         for char in line:
             if char in symbPairs:
                 symbStack.append(symbPairs[char])
@@ -28,13 +31,21 @@ def TotalErrorScore(lines):
                 if symbStack[-1] == char:
                     symbStack.pop()
                 else:
-                    totalErrorScore += charErrorScore[char]
+                    lineError = True
                     break
+            
+        if not lineError:
+            while len(symbStack) > 0:
+                charEnd = symbStack.pop()
+                linesScores[index] = 5 * linesScores[index] + charIncompScore[charEnd]
 
-    return totalErrorScore
+    linesScores = list(filter(lambda x: x != 0, linesScores))
+    midScore = sorted(linesScores)[math.ceil((len(linesScores) - 1)/2)]
+
+    return midScore
 
 def daGoods():
-    print(TotalErrorScore(readInputFile("exinput.txt")))
-    print(TotalErrorScore(readInputFile("input.txt")))
+    print(TotalIncompScore(readInputFile("exinput.txt")))
+    print(TotalIncompScore(readInputFile("input.txt")))
 
 daGoods()
