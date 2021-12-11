@@ -11,7 +11,7 @@ def readInputFile(fileName):
 
     return inputLines
 
-# Assuming all chunks at least start (so never looking for a '(', '[', etc as an error only cosing symbols).
+# Assuming all chunks at least start (never looking for a '(', '[', etc as an error; only closing symbols can be considered errors).
 def TotalIncompScore(lines):
     symbStack = []
 
