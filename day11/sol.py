@@ -25,12 +25,15 @@ class Dumbos:
                 self.__legalRange.add((x,y))
 
     def runScenario(self, steps):
-        for step in range(steps):
+        stepCount = 0
+        while self.__flashesCount != len(self.__grid) * len(self.__grid[0]):
+            stepCount += 1
             self.__runStep()
 
-        return self.__flashesCount
+        return stepCount
 
     def __runStep(self):
+        self.__flashesCount = 0 # Flashes per step instead of flashes per x steps
         self.__hardZeroBoys = set()
         self.__burstingBoys = set()
         for x, line in enumerate(self.__grid):
@@ -66,8 +69,8 @@ class Dumbos:
 
 def daGoodies():
     ex1 = Dumbos(readInputFile("exinput.txt"))
-    print(ex1.runScenario(100))
+    print(ex1.runScenario(1000000))
     part1 = Dumbos(readInputFile("input.txt"))
-    print(part1.runScenario(100))
+    print(part1.runScenario(100000))
 
 daGoodies()
