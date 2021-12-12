@@ -23,10 +23,13 @@ class CaveGraph:
             self.graph[nodeFrom].append(nodeTo)
             self.graph[nodeTo].append(nodeFrom)
 
-    def __canBeTraversed(self, node, pathCur):
+    def __canBeTraversed(self, node, pathCur, nodeToDouble):
         # These nodes can only be traversed once
+        maxVisits = 1
+        if node == nodeToDouble:
+            maxVisits = 2
         if node == node.lower():
-            if node not in pathCur or pathCur[node] == 0:
+            if node not in pathCur or pathCur[node] < maxVisits:
                 return True
             else:
                 return False
@@ -34,20 +37,23 @@ class CaveGraph:
         else:
             return True
             
-    def search(self, pathCur, nodeCur, pathsFound):
+    def search(self, pathCur, nodeCur, pathsFound, pathCurList, nodeToDouble):
         # Search each connected node
         for nextNode in self.graph[nodeCur]:
-            if self.__canBeTraversed(nextNode, pathCur):
+            if self.__canBeTraversed(nextNode, pathCur, nodeToDouble):
                 if nextNode == "end":
                     # This should probably be done at the start of next recursion
                     # but maybe not.
                     pathCur[nextNode] += 1
-                    pathsFound.append(Counter(pathCur))
+                    pathCurList.append(nextNode)
+                    pathsFound.add(''.join(pathCurList))
                 else:
                     pathCur[nextNode] += 1
-                    self.search(pathCur, nextNode, pathsFound)
+                    pathCurList.append(nextNode)
+                    self.search(pathCur, nextNode, pathsFound, pathCurList, nodeToDouble)
 
                 pathCur[nextNode] -= 1
+                pathCurList.pop()
                 assert (pathCur[nextNode] >= 0)
 
 
@@ -57,8 +63,16 @@ class CaveGraph:
         nodeCur = "start"
         pathCur = Counter()
         pathCur[nodeCur] += 1
-        pathsFound = []
-        self.search(pathCur, nodeCur, pathsFound)
+        pathCurList = []
+        pathCurList.append(nodeCur)
+        pathsFound = set()
+        nodesDoubled = set()
+        for nodeToDouble in self.graph:
+            if nodeToDouble != "start" and \
+            nodeToDouble != "end" and \
+            nodeToDouble != "start":
+                nodesDoubled.add(nodeToDouble)
+                self.search(pathCur, nodeCur, pathsFound, pathCurList, nodeToDouble)
 
         return len(pathsFound)
 
