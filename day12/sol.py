@@ -18,7 +18,10 @@ class CaveGraph:
             nodeTo = line.split('-')[1]
             if nodeFrom not in self.graph:
                 self.graph[nodeFrom] = []
+            if nodeTo not in self.graph:
+                self.graph[nodeTo] = []
             self.graph[nodeFrom].append(nodeTo)
+            self.graph[nodeTo].append(nodeFrom)
 
     def __canBeTraversed(self, node, pathCur):
         # These nodes can only be traversed once
@@ -32,22 +35,20 @@ class CaveGraph:
             return True
             
     def search(self, pathCur, nodeCur, pathsFound):
-        # Can halt pretty quickly if at a dead end
-        if nodeCur in self.graph:
-            # Search each connected node
-            for nextNode in self.graph[nodeCur]:
-                if self.__canBeTraversed(nextNode, pathCur):
-                    if nextNode == "end":
-                        # This should probably be done at the start of next recursion
-                        # but maybe not.
-                        pathCur[nextNode] += 1
-                        pathsFound.append(Counter(pathCur))
-                    else:
-                        pathCur[nextNode] += 1
-                        self.search(pathCur, nextNode, pathsFound)
+        # Search each connected node
+        for nextNode in self.graph[nodeCur]:
+            if self.__canBeTraversed(nextNode, pathCur):
+                if nextNode == "end":
+                    # This should probably be done at the start of next recursion
+                    # but maybe not.
+                    pathCur[nextNode] += 1
+                    pathsFound.append(Counter(pathCur))
+                else:
+                    pathCur[nextNode] += 1
+                    self.search(pathCur, nextNode, pathsFound)
 
-                    pathCur[nextNode] -= 1
-                    assert (pathCur[nextNode] >= 0)
+                pathCur[nextNode] -= 1
+                assert (pathCur[nextNode] >= 0)
 
 
 
@@ -65,5 +66,14 @@ class CaveGraph:
 def losGoods():
     ex1 = CaveGraph(readInputFile("exinput1.txt"))
     print(ex1.getPaths())
+
+    ex2 = CaveGraph(readInputFile("exinput2.txt"))
+    print(ex2.getPaths())
+
+    ex3 = CaveGraph(readInputFile("exinput3.txt"))
+    print(ex3.getPaths())
+
+    actual = CaveGraph(readInputFile("input.txt"))
+    print(actual.getPaths())
 
 losGoods()
