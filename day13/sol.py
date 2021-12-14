@@ -32,7 +32,11 @@ def GenerateGrid(inputFile):
     for fold in folds:
         grid = ExecFold(fold, grid)
 
-
+    # Print the table
+    for y in grid:
+        for char in y:
+            print(char, end = " ")
+        print("")
 
     return CalcScore(grid)
 
@@ -109,7 +113,7 @@ def CalcScore(grid):
     return score
 
 def iBeni():
-    print(GenerateGrid("exinput.txt"))
+    #print(GenerateGrid("exinput.txt"))
     print(GenerateGrid("input.txt"))
 
 iBeni()
