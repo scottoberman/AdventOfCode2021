@@ -1,6 +1,9 @@
 import os
 from collections import Counter, OrderedDict
 
+charFill = '.'
+charMark = '#'
+
 def readInputFile(fileName):
     __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__))) + '\\' + fileName
@@ -19,39 +22,51 @@ def GenerateGrid(inputFile):
     grid = [[0 for x in range(maxX)] for y in range(maxY)]
 
     # Prefill grid with dots
-    charFill = '.'
     for x in range(maxX):
         for y in range(maxY):
             grid[y][x] = charFill
 
-    charMark = '#'
     for coord in coords:
         grid[coord[1]][coord[0]] = charMark
 
     for fold in folds:
-        ExecFold(fold, grid)
+        grid = ExecFold(fold, grid)
 
-    someThing = 4
+
+
+    return CalcScore(grid)
 
 def ExecFold(fold, grid):
+    foldedPart = []
     if fold[0] == 'y':
-        foldedPart = [tuple(ele) for ele in grid[fold[1]:-1]]
+        foldedPart = [tuple(ele) for ele in grid[len(grid):fold[1]:-1]]
 
-        # Shrink the grid
         grid = grid[:fold[1]]
 
-        # fold may extend over top of original grid
-        # but check this case later
-        assert(len(foldedPart) > len(grid))
-        # if len(foldedPart) > len(grid):
+        # Fold may extend over top/side of original grid.
+        # If so, fall on sword.
+        assert(len(foldedPart) <= len(grid))
 
 
-    elif fold[1] == 'y':
+    elif fold[0] == 'x':
+        
+        for y in range(len(grid)):
+            foldedPart.append([])
+            for x in range(len(grid[0]) - 1, fold[1], -1):   
+                foldedPart[-1].append(grid[y][x])
+
+        # Shrink the grid
+        grid = [grid[y][0:fold[1]] for y in range(len(grid))]
+
     else:
         assert(False)
 
-def FoldOnGrid(foldedPart, grid):
-    # Measure from the bottom
+    for x in range(len(foldedPart[0])):
+        for y in range(len(foldedPart)):
+            if foldedPart[y][x] == charMark:
+                grid[len(grid) - len(foldedPart) + y][len(grid[0]) - len(foldedPart[0]) + x] = charMark
+
+    return grid
     
     
 def ParseLines(lines):
@@ -84,7 +99,17 @@ def PreProcessCoords(coords):
     
     return maxX + 1, maxY + 1
 
+def CalcScore(grid):
+    score = 0
+    for y in grid:
+        for ele in y:
+            if ele == charMark:
+                score += 1
+
+    return score
+
 def iBeni():
     print(GenerateGrid("exinput.txt"))
+    print(GenerateGrid("input.txt"))
 
 iBeni()
