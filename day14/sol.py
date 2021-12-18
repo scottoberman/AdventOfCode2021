@@ -13,46 +13,30 @@ def readInputFile(fileName):
 
     return inputLines
     
-def ParseLines(lines):
+def ResolveChem(lines, runs):
     startChem = lines[0]
     rules = {}
 
     for line in lines[2:]:
         chars = line.split(' -> ')[0]
         insert = line.split(' -> ')[1]
+        pairs = Counter(map(str.__add__, startChem, startChem[1:]))
+        cntr = Counter(startChem)
 
         rules[chars] = insert
 
-    return startChem, rules
+    for run in range(runs):
+        for (a,b), c in pairs.copy().items():
+            x = rules[a+b]
+            pairs[a+b] -= c
+            pairs[a+x] += c
+            pairs[x+b] += c
+            cntr[x] += c
 
-def ResolveChem(lines, steps):
-    chemStatic, rules = ParseLines(lines)
-
-    chemCur = str(chemStatic)
-
-    for step in range(steps):
-        for startPos in range(len(chemStatic) - 1, -1, -1):
-            if chemStatic[startPos:startPos + 2] in rules:
-                pre = chemCur[:startPos + 1]
-                post = chemCur[startPos + 1:]
-                chemCur = chemCur[:startPos + 1] + rules[chemStatic[startPos:startPos + 2]] + chemCur[startPos + 1:]
-            
-        chemStatic = chemCur
-
-    return GetChemScore(chemStatic)
-
-def GetChemScore(chem):
-    chars = Counter()
-
-    for char in chem:
-        chars[char] += 1
-
-    score = chars.most_common(1)[0][1] - chars.most_common()[-1][1]
-
-    return score
+    return max(cntr.values())-min(cntr.values())
 
 def oOloa():
-    print(ResolveChem(readInputFile("exinput.txt"), 10))
-    print(ResolveChem(readInputFile("input.txt"), 10))
+    # print(ResolveChem(readInputFile("exinput.txt"), 10))
+    print(ResolveChem(readInputFile("input.txt"), 40))
 
 oOloa()
