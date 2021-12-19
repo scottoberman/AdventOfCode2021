@@ -1,0 +1,6 @@
+V = 3 bits = version
+T = 3 bits = type id
+    4 = literal value
+    anything else = operator
+
+Header = V + T = 6 bits
